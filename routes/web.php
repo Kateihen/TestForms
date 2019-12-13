@@ -12,10 +12,14 @@
 */
 
 Route::get('/', function () {
-	return view('welcome');
+	if (!Auth::check()) {
+		return view('welcome');
+	}
+	return redirect('forms');
 });
 
 Auth::routes();
 
 Route::get('/forms', 'HomeController@index')->name('home');
 Route::post('/forms', 'HomeController@store');
+Route::get('/{filename}', 'HomeController@download');

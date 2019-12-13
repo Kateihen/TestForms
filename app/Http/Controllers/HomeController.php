@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Feedback;
+use App\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
@@ -21,18 +22,23 @@ class HomeController extends Controller
 		$this->middleware('auth');
 	}
 
-	/**
-	 * Show the application dashboard.
-	 *
-	 * @return \Illuminate\Contracts\Support\Renderable
-	 */
+	public function welcome()
+	{
+		
+	}
+
 	public function index()
 	{
 		$user = Auth::user();
 
 		if ($user->authorizeRole('manager')) {
-			return view('manager');
+
+			$feedbacks = Feedback::simplePaginate(15);
+			$users = User::all();
+
+			return view('manager', ['feedbacks' => $feedbacks]);
 		}
+
 		return view('home');
 	}
 
@@ -41,7 +47,7 @@ class HomeController extends Controller
 
 		$attributes = $this->validateFeedback($request);
 
-		$att_file = \Request::file('attached_file');		
+		$att_file = \Request::file('attached_file');        
 		$extension = $att_file->guessExtension();
 		Storage::disk('public')
 			->put($att_file->getFilename().'.'.$extension, File::get($att_file));
@@ -50,7 +56,8 @@ class HomeController extends Controller
 
 		$feedback->topic = $attributes['topic'];
 		$feedback->message = $attributes['message'];
-		$feedback->user_id = Auth::user()->id;
+		$feedback->user_name = Auth::user()->name;
+		$feedback->user_email = Auth::user()->email;
 		$feedback->mime = $att_file->getClientMimeType();
 		$feedback->original_filename = $att_file->getClientOriginalName();
 		$feedback->filename = $att_file->getFilename().'.'.$extension;
@@ -65,5 +72,16 @@ class HomeController extends Controller
 			'topic' => ['required', 'min:3', 'max:255'],
 			'message' => ['required', 'min:10']
 		]);
+	}
+
+	public function download($filename)
+	{
+		$file_path = storage_path().'/app/public/'.$filename;
+
+		if (file_exists($file_path)) {
+			echo 1;
+			return Storage::download('public/'.$filename);
+		}
+
 	}
 }

@@ -14,7 +14,9 @@ class FeedbackSeeder extends Seeder
     public function run()
     {
         $user = factory(User::class, 10)->create()->each(function ($user) {
-            $user->feedbacks()->save(factory(Feedback::class)->make());
+            $user->feedbacks()->save(factory(Feedback::class)->make([
+                'user_email' => $user->email,
+            ]));
         });
     }
 }
