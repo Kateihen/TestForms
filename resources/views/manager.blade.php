@@ -19,6 +19,9 @@
 				<b>Message:</b>
 				<br>
 				<p>{{ $feedback->message }}</p>
+
+				<b>Created at:</b> {{ $feedback->created_at }}
+				
 				<br>
 
 				@if($feedback->filename)

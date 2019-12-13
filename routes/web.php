@@ -12,10 +12,10 @@
 */
 
 Route::get('/', function () {
-	if (!Auth::check()) {
-		return view('welcome');
-	}
-	return redirect('forms');
+    if (!Auth::check()) {
+        return view('welcome');
+    }
+    return redirect('forms');
 });
 
 Auth::routes();
