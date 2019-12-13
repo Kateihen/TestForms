@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Feedback extends Model
 {
-	protected $fillable = [
-		'topic', 'message', 'password',
-	];
+    protected $fillable = [
+        'topic', 'message', 'password',
+    ];
 
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
